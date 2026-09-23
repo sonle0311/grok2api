@@ -11,9 +11,11 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/shared/auth/use-auth";
 import { GitHubMark } from "@/shared/components/github-mark";
 import { SiteFooter } from "@/shared/components/site-footer";
+import { languageOptions } from "@/shared/i18n";
+import { cn } from "@/shared/lib/cn";
 
 export function LoginPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
   const schema = z.object({
@@ -52,11 +54,18 @@ export function LoginPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <header className="mx-auto flex h-16 w-full max-w-[960px] items-center justify-between px-5 sm:px-8 lg:px-0">
         <span className="text-sm font-semibold text-foreground">{t("appName")}</span>
-        <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-foreground" asChild>
-          <a href="https://github.com/chenyme/grok2api" target="_blank" rel="noreferrer" aria-label="GitHub">
-            <GitHubMark />
-          </a>
-        </Button>
+        <div className="flex items-center gap-1">
+          {languageOptions.map((option) => (
+            <Button key={option.code} type="button" variant="ghost" size="sm" className={cn("h-8 px-2 text-xs", i18n.language === option.code ? "text-foreground" : "text-muted-foreground")} aria-pressed={i18n.language === option.code} onClick={() => void i18n.changeLanguage(option.code)}>
+              {option.label}
+            </Button>
+          ))}
+          <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-foreground" asChild>
+            <a href="https://github.com/chenyme/grok2api" target="_blank" rel="noreferrer" aria-label="GitHub">
+              <GitHubMark />
+            </a>
+          </Button>
+        </div>
       </header>
 
       <main className="mx-auto flex w-full max-w-[960px] flex-1 items-center justify-center px-5 py-12 sm:px-8 lg:px-0">

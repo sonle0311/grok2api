@@ -18,6 +18,7 @@ import { useAuth } from "@/shared/auth/use-auth";
 import { GitHubMark } from "@/shared/components/github-mark";
 import { SiteFooter } from "@/shared/components/site-footer";
 import { cn } from "@/shared/lib/cn";
+import { languageOptions } from "@/shared/i18n";
 import { CurrentVersionLabel } from "@/features/system/version-update";
 
 const navigation = [
@@ -210,8 +211,7 @@ export function AppShell() {
           <DropdownMenuSub>
             <DropdownMenuSubTrigger className="h-8"><Languages />{t("shell.language")}</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => void i18n.changeLanguage("zh-CN")}>简体中文</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => void i18n.changeLanguage("en")}>English</DropdownMenuItem>
+              {languageOptions.map((option) => <DropdownMenuItem key={option.code} onClick={() => void i18n.changeLanguage(option.code)}>{option.label}</DropdownMenuItem>)}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuItem className="h-8" onClick={() => setPasswordOpen(true)}><KeyRound />{t("auth.changePassword")}</DropdownMenuItem>

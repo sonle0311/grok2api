@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { vi as viCatalog } from "./vi";
 
 const resources = {
   "zh-CN": {
@@ -2088,6 +2089,7 @@ const resources = {
       },
     },
   },
+  vi: { translation: viCatalog },
 } as const;
 
 Object.assign(resources["zh-CN"].translation.models as unknown as Record<string, string>, {
@@ -2390,10 +2392,21 @@ function storeLanguage(language: string): void {
 }
 
 const storedLanguage = readStoredLanguage();
+function initialLanguage(): string {
+  if (storedLanguage === "zh-CN" || storedLanguage === "en" || storedLanguage === "vi") return storedLanguage;
+  if (typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("vi")) return "vi";
+  return "zh-CN";
+}
+
+export const languageOptions = [
+  { code: "zh-CN", label: "简体中文" },
+  { code: "en", label: "English" },
+  { code: "vi", label: "Tiếng Việt" },
+] as const;
 
 void i18n.use(initReactI18next).init({
   resources,
-  lng: storedLanguage === "en" ? "en" : "zh-CN",
+  lng: initialLanguage(),
   fallbackLng: "zh-CN",
   interpolation: { escapeValue: false },
 });
