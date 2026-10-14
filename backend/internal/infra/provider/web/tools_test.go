@@ -418,6 +418,19 @@ func TestToolStreamSieveHandlesSplitXML(t *testing.T) {
 	if !second.Complete || len(second.Calls) != 1 || second.Calls[0].Arguments != `{"q":"x"}` || strings.Contains(second.SafeText, "tool_calls") {
 		t.Fatalf("second = %#v", second)
 	}
+	t.Run("chunks inside captured XML", func(t *testing.T) {
+		sieve := newToolStreamSieve(map[string]struct{}{"lookup": {}})
+		for _, chunk := range []string{"<tool_calls><tool_call>", `<tool_name>lookup</tool_name><parameters>{"q":`} {
+			result := sieve.Feed(chunk)
+			if result.SafeText != "" || result.Complete {
+				t.Fatalf("incomplete XML leaked: %#v", result)
+			}
+		}
+		result := sieve.Feed(`"x"}</parameters></tool_call></tool_calls>`)
+		if !result.Complete || len(result.Calls) != 1 || result.Calls[0].Arguments != `{"q":"x"}` || result.SafeText != "" {
+			t.Fatalf("captured XML was not converted: %#v", result)
+		}
+	})
 }
 
 func TestToolStreamSievePreservesInvalidSyntaxAndTrailingText(t *testing.T) {

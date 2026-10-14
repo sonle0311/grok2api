@@ -403,7 +403,10 @@ func (s *toolStreamSieve) Feed(chunk string) toolStreamResult {
 	}
 	combined := s.buffer + chunk
 	s.buffer = ""
-	if !s.capturing {
+	if s.capturing {
+		s.buffer = combined
+		combined = ""
+	} else {
 		lower := strings.ToLower(combined)
 		index := strings.Index(lower, "<tool_calls")
 		if index < 0 {
